@@ -20,22 +20,22 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y openjdk-11-jdk python3-pip unzip wget
-          
+
           # Download the command line tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip
           mkdir -p $HOME/android-sdk/cmdline-tools
           unzip -q cmdline-tools.zip -d $HOME/android-sdk/cmdline-tools
           mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
-          
+
           # Set Android environment variables
           export ANDROID_HOME=$HOME/android-sdk
           export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
           export PATH=$ANDROID_HOME/platform-tools:$PATH
-          
+
           # Accept SDK licenses
           yes | sdkmanager --licenses
 
-          # Install required components
+          # Install required components (including Aidl)
           sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" "system-images;android-30;google_apis;x86_64"
 
       # Cache Buildozer global directory
@@ -66,6 +66,8 @@ jobs:
       # Build the APK
       - name: Build APK
         run: |
+          buildozer appclean  # Clean up previous builds
+          rm -rf ~/.buildozer  # Delete Buildozer cache
           buildozer android debug
 
       # Upload the generated APK as an artifact
