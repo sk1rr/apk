@@ -34,7 +34,9 @@ jobs:
           
           # Accept SDK licenses
           yes | sdkmanager --licenses
-          sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" "system-images;android-30;google_apis;x86_64" "build-tools;36.0.0"
+
+          # Install required components
+          sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" "system-images;android-30;google_apis;x86_64"
 
       # Cache Buildozer global directory
       - name: Cache Buildozer global directory
