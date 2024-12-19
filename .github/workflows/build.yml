@@ -38,8 +38,11 @@ jobs:
           # Accept all SDK licenses automatically
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
 
-          # Install necessary SDK components
+          # Install necessary SDK components and NDK
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" "system-images;android-30;google_apis;x86_64"
+          
+          # Install Android NDK and build tools version 36
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;25.2.9519653" "build-tools;36.0.0-rc3"
 
       # Cache Buildozer global directory
       - name: Cache Buildozer global directory
