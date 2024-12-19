@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -19,42 +19,40 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y openjdk-11-jdk python3-pip unzip wget cython
-
-          # Download and set up the Android SDK
+          sudo apt install -y openjdk-11-jdk python3-pip unzip wget
+          
+          # Download the command line tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip
           mkdir -p $HOME/android-sdk/cmdline-tools
           unzip -q cmdline-tools.zip -d $HOME/android-sdk/cmdline-tools
           mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
           
-          # Set environment variables for Android SDK
-          echo "export ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
-          echo "export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH" >> $GITHUB_ENV
-
-          # Reload environment variables and install required SDK components
-          source $GITHUB_ENV
+          # Set Android environment variables
+          export ANDROID_HOME=$HOME/android-sdk
+          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
+          export PATH=$ANDROID_HOME/platform-tools:$PATH
+          
+          # Accept SDK licenses
           yes | sdkmanager --licenses
-          sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" "ndk;21.3.6528147"
 
+          # Install required components
+          sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" "system-images;android-30;google_apis;x86_64"
+        
       # Cache Buildozer global directory
       - name: Cache Buildozer global directory
         uses: actions/cache@v3
         with:
-          path: ~/.buildozer
+          path: .buildozer_global
           key: buildozer-global-${{ hashFiles('buildozer.spec') }}
-          restore-keys: |
-            buildozer-global-
 
       # Cache Buildozer build directory
       - name: Cache Buildozer build directory
         uses: actions/cache@v3
         with:
-          path: ~/.buildozer
-          key: buildozer-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
-          restore-keys: |
-            buildozer-${{ runner.os }}-
+          path: .buildozer
+          key: ${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
 
-      # Install Buildozer
+      # Install Buildozer and dependencies
       - name: Install Buildozer
         run: |
           pip3 install --upgrade pip
@@ -63,7 +61,7 @@ jobs:
       # Build the APK
       - name: Build APK
         run: |
-          buildozer android debug -v
+          buildozer android debug
 
       # Upload the generated APK as an artifact
       - name: Upload APK artifact
