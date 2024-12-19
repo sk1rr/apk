@@ -21,6 +21,12 @@ jobs:
           sudo apt update
           sudo apt install -y openjdk-11-jdk python3-pip unzip wget
 
+          # Install Apache Ant
+          wget https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.4-bin.tar.gz
+          tar -xvzf apache-ant-1.9.4-bin.tar.gz
+          sudo mv apache-ant-1.9.4 /opt/
+          sudo ln -s /opt/apache-ant-1.9.4/bin/ant /usr/bin/ant
+
           # Download and install Android command-line tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip
           mkdir -p $HOME/android-sdk/cmdline-tools
