@@ -37,7 +37,7 @@ jobs:
 
           # Install required components
           sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" "system-images;android-30;google_apis;x86_64"
-        
+
       # Cache Buildozer global directory
       - name: Cache Buildozer global directory
         uses: actions/cache@v3
@@ -51,6 +51,11 @@ jobs:
         with:
           path: .buildozer
           key: ${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
+
+      # Install Cython
+      - name: Install Cython
+        run: |
+          pip3 install cython
 
       # Install Buildozer and dependencies
       - name: Install Buildozer
